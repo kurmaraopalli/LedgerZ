@@ -1,0 +1,903 @@
+/* CSS Variables for design system */
+:root {
+    --bg-primary: #0a0c10;
+    --bg-secondary: #141822;
+    --bg-card: rgba(26, 32, 46, 0.65);
+    --border-color: #2b354d;
+    --text-main: #f0f4f8;
+    --text-muted: #8a9bb8;
+    --text-green: #33ff33;
+    --text-cyan: #33ffff;
+    --text-yellow: #ffff33;
+    --text-error: #ff3333;
+    --accent-blue: #007aff;
+    --crt-bg: #030805;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-main);
+    font-family: 'Outfit', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Container */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Header */
+.app-header {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-area h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    background: linear-gradient(135deg, #ffffff, #8a9bb8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.badge.zos {
+    background: linear-gradient(135deg, #ff4500, #ff8c00);
+    color: white;
+}
+
+.system-status {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+}
+
+.status-item .label {
+    color: var(--text-muted);
+}
+
+.status-item .value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    color: var(--text-cyan);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #33ff33;
+    box-shadow: 0 0 8px #33ff33;
+    display: inline-block;
+}
+
+.status-dot.online {
+    animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+    0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(51, 255, 51, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(51, 255, 51, 0); }
+    100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(51, 255, 51, 0); }
+}
+
+/* Workspace Layout */
+.workspace {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    height: calc(100vh - 60px);
+    overflow: hidden;
+}
+
+.pane {
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.pane:last-child {
+    border-right: none;
+}
+
+.pane-header {
+    background-color: #0f121a;
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 45px;
+}
+
+.pane-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.terminal-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-control {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.btn-control:hover {
+    opacity: 1;
+}
+
+.btn-terminal-power {
+    background-color: #ff3333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    box-shadow: 0 0 6px rgba(255, 51, 51, 0.4);
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.btn-terminal-power:hover {
+    background-color: #ff5555;
+    box-shadow: 0 0 10px rgba(255, 51, 51, 0.7);
+}
+
+.btn-terminal-power.off {
+    background-color: #555;
+    box-shadow: none;
+}
+
+/* Terminal Emulator Container */
+.terminal-wrapper {
+    flex: 1;
+    background-color: #050505;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+/* CRT Screen Wrapper */
+.crt-screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: var(--crt-bg);
+    border: 12px solid #22252a;
+    border-radius: 12px;
+    box-shadow: inset 0 0 40px rgba(0, 0, 0, 1), 0 10px 25px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Glass Screen Overlay for Reflection */
+.crt-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.15) 100%);
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* CRT Scanlines */
+.crt-screen::after {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 4px, 6px 100%;
+    z-index: 9;
+    pointer-events: none;
+}
+
+/* CRT Flicker */
+.crt-flicker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(18, 16, 16, 0.02);
+    pointer-events: none;
+    z-index: 8;
+    animation: crt-flicker-anim 0.15s infinite;
+}
+
+@keyframes crt-flicker-anim {
+    0% { opacity: 0.98; }
+    50% { opacity: 1; }
+    100% { opacity: 0.97; }
+}
+
+/* Power Off Screen Overlay */
+.terminal-off-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #444;
+    transition: opacity 0.5s ease;
+    pointer-events: all;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.terminal-off-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.off-message h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.off-message p {
+    font-size: 0.9rem;
+    color: #444;
+}
+
+/* Terminal Screen Content */
+.terminal-screen {
+    flex: 1;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: 'VT323', monospace;
+    font-size: 1.55rem;
+    line-height: 1.2;
+    overflow: hidden;
+    z-index: 2;
+}
+
+.terminal-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.row-header {
+    border-bottom: 1px dashed rgba(51, 255, 51, 0.2);
+    padding-bottom: 4px;
+}
+
+.row-sub {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+}
+
+.terminal-body {
+    flex: 1;
+    margin: 10px 0;
+    overflow-y: auto;
+    scrollbar-width: none; /* Hide scrollbar for CRT immersion */
+}
+
+.terminal-body::-webkit-scrollbar {
+    display: none;
+}
+
+.log-line {
+    margin-bottom: 5px;
+    word-break: break-all;
+    white-space: pre-wrap;
+}
+
+.font-large {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+/* Colors for Terminal lines */
+.text-green { color: var(--text-green); text-shadow: 0 0 4px rgba(51, 255, 51, 0.5); }
+.text-cyan { color: var(--text-cyan); text-shadow: 0 0 4px rgba(51, 255, 255, 0.5); }
+.text-yellow { color: var(--text-yellow); text-shadow: 0 0 4px rgba(255, 255, 51, 0.5); }
+.text-error { color: var(--text-error); text-shadow: 0 0 4px rgba(255, 51, 51, 0.5); }
+.text-white { color: #fff; text-shadow: 0 0 4px rgba(255, 255, 255, 0.5); }
+
+/* Input Block */
+.input-line {
+    display: flex;
+    align-items: center;
+    border-top: 1px dashed rgba(51, 255, 51, 0.2);
+    padding-top: 8px;
+    margin-bottom: 4px;
+}
+
+.input-container {
+    display: flex;
+    flex: 1;
+    margin-left: 10px;
+    align-items: center;
+    position: relative;
+}
+
+.input-line input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-green);
+    font-family: 'VT323', monospace;
+    font-size: 1.6rem;
+    width: 100%;
+    caret-color: transparent; /* custom cursor used */
+}
+
+.custom-cursor {
+    display: inline-block;
+    width: 10px;
+    height: 1.5rem;
+    background-color: var(--text-green);
+    animation: blink 0.8s infinite;
+    position: absolute;
+    left: 0;
+    pointer-events: none;
+}
+
+@keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+}
+
+/* Status Bar */
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    background-color: rgba(51, 255, 51, 0.1);
+    font-size: 1.1rem;
+    padding: 2px 6px;
+    border-radius: 2px;
+    color: var(--text-green);
+    text-transform: uppercase;
+}
+
+.stat-block {
+    display: inline-block;
+}
+
+/* On-Screen Keyboard */
+.on-screen-keypad {
+    padding: 10px;
+    background-color: #121620;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    border-top: 1px solid var(--border-color);
+}
+
+.key-btn {
+    flex: 1;
+    background-color: #242c3e;
+    color: var(--text-main);
+    border: 1px solid #323d56;
+    border-radius: 4px;
+    padding: 8px 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.15s, transform 0.1s;
+}
+
+.key-btn:hover {
+    background-color: #2f3a52;
+}
+
+.key-btn:active {
+    transform: translateY(1px);
+}
+
+.key-btn.key-action {
+    background-color: #1e3a5f;
+    border-color: #2b558c;
+    color: var(--text-cyan);
+}
+
+.key-btn.key-action:hover {
+    background-color: #2b558c;
+}
+
+/* Right Control Pane Tab Layout */
+.tab-selectors {
+    display: flex;
+    background-color: #0f121a;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 10px;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.tab-btn:hover {
+    color: var(--text-main);
+}
+
+.tab-btn.active {
+    color: var(--accent-blue);
+    border-bottom-color: var(--accent-blue);
+}
+
+.tab-content-container {
+    flex: 1;
+    overflow-y: auto;
+    background-color: #0b0d13;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+.tab-content.active {
+    display: flex;
+}
+
+.content-header h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #ffffff;
+}
+
+.content-header p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+/* Dataset editors layout */
+.editor-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex: 1;
+}
+
+.editor-container {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+    height: 180px;
+}
+
+.editor-header {
+    background-color: #121722;
+    padding: 6px 12px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.editor-header .col-spec {
+    color: var(--text-cyan);
+}
+
+.flat-file-editor {
+    flex: 1;
+    background-color: #080a0e;
+    color: #33ff33;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    padding: 10px;
+    border: none;
+    outline: none;
+    resize: none;
+    line-height: 1.4;
+}
+
+.datasets-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: opacity 0.2s, background-color 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--accent-blue);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #3593ff;
+}
+
+.btn-secondary {
+    background-color: #242c3e;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+}
+
+.btn-secondary:hover {
+    background-color: #2f3a52;
+}
+
+.btn-primary:disabled, .btn-secondary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Database tables view */
+.grid-views-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.db-section h4 {
+    font-size: 0.85rem;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.badge-status {
+    font-size: 0.7rem;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background-color: #555;
+    color: white;
+}
+
+.badge-status.processed {
+    background-color: #2ecc71;
+}
+
+.table-wrapper {
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.mini-table {
+    max-height: 160px;
+    overflow-y: auto;
+}
+
+.db-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    text-align: left;
+}
+
+.db-table th {
+    background-color: #121722;
+    color: var(--text-muted);
+    padding: 8px 12px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.db-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(43, 53, 77, 0.3);
+    color: var(--text-main);
+}
+
+.db-table tr:last-child td {
+    border-bottom: none;
+}
+
+.db-table tbody tr:hover {
+    background-color: rgba(0, 122, 255, 0.08);
+}
+
+.text-center { text-align: center; }
+.text-muted { color: var(--text-muted) !important; }
+
+/* Compiles & JCL Submitter */
+.compilation-stepper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.step-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s;
+}
+
+.step-card.success {
+    border-color: #2ecc71;
+}
+
+.step-card.success::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background-color: #2ecc71;
+}
+
+.step-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #242c3e;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.step-card.success .step-badge {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.step-info {
+    flex: 1;
+}
+
+.step-info h4 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.step-info code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-cyan);
+}
+
+.btn-compile {
+    background-color: #242c3e;
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-compile:hover:not(:disabled) {
+    background-color: #2f3a52;
+}
+
+.btn-compile:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.step-card.success .btn-compile {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: #2ecc71;
+    border-color: rgba(46, 204, 113, 0.3);
+}
+
+/* JCL Output Console */
+.terminal-log-view {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+    flex: 1;
+    min-height: 200px;
+}
+
+.log-header {
+    background-color: #121722;
+    padding: 8px 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.btn-clear-logs {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.btn-clear-logs:hover {
+    color: var(--text-main);
+}
+
+.log-output {
+    flex: 1;
+    background-color: #05070a;
+    color: #8da2bb;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    padding: 12px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    line-height: 1.4;
+}
+
+/* Source code tab styling */
+.source-selector {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.src-file-btn {
+    background-color: #161c29;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    border-radius: 4px;
+    padding: 6px 12px;
+    font-size: 0.78rem;
+    font-family: 'IBM Plex Mono', monospace;
+    cursor: pointer;
+}
+
+.src-file-btn.active {
+    background-color: #242c3e;
+    color: var(--text-main);
+    border-color: #007aff;
+}
+
+.source-code-display {
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: #06080b;
+    padding: 15px;
+    flex: 1;
+    overflow: auto;
+    max-height: 480px;
+}
+
+.source-code-display pre {
+    margin: 0;
+}
+
+.source-code-display code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: #a5b9cf;
+    line-height: 1.4;
+    white-space: pre;
+}
+
+/* Custom Scrollbar for Right Pane */
+.tab-content-container::-webkit-scrollbar,
+.source-code-display::-webkit-scrollbar,
+.log-output::-webkit-scrollbar,
+.mini-table::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.tab-content-container::-webkit-scrollbar-track,
+.source-code-display::-webkit-scrollbar-track,
+.log-output::-webkit-scrollbar-track,
+.mini-table::-webkit-scrollbar-track {
+    background: #0b0d13;
+}
+
+.tab-content-container::-webkit-scrollbar-thumb,
+.source-code-display::-webkit-scrollbar-thumb,
+.log-output::-webkit-scrollbar-thumb,
+.mini-table::-webkit-scrollbar-thumb {
+    background: #232c3f;
+    border-radius: 3px;
+}
+
+.tab-content-container::-webkit-scrollbar-thumb:hover,
+.source-code-display::-webkit-scrollbar-thumb:hover,
+.log-output::-webkit-scrollbar-thumb:hover,
+.mini-table::-webkit-scrollbar-thumb:hover {
+    background: #323e59;
+}

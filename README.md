@@ -6,6 +6,20 @@ This repository is optimized to be edited using **VS Code (with IBM Z Open Edito
 
 ---
 
+## 🎯 Problem Statements: What LedgerZ Solves
+
+LedgerZ addresses two distinct challenges—one relating to **enterprise banking architecture** and the other to **modern developer training**:
+
+### A. The Banking Challenge: Scaling High-Volume Transactions
+In retail banking or card networks, processing millions of balances every night on database servers (like DB2 or SQL) is slow and expensive. Writing and locking database records "in place" creates massive system bottlenecks. 
+* **The Solution**: Mainframes solve this by treating records as sequential streams (**QSAM** flat files). By reading yesterday's state file and today's transaction file, the system matches keys in a single pass ($O(N)$ linear time) and writes a brand new ledger file. This method is incredibly fast and operates without the overhead of active database engines.
+
+### B. The Developer Challenge: Mainframe Accessibility & Testing
+Testing or learning COBOL and JCL historically requires access to a mainframe partition (LPAR), proprietary emulators, and complex FTP/Zowe uploading sequences. This high barrier makes learning mainframe programming difficult.
+* **The Solution**: LedgerZ provides a **local interactive web simulator dashboard**. It emulates TSO/E terminal commands, visualizes step-by-step dataset merges, compiles COBOL, and executes jobs in-browser. This allows developers to learn flat-file mainframe structures entirely offline inside standard browsers.
+
+---
+
 ## 🏗️ Architecture: Pure Flat-File Batch Processing
 
 Unlike modern cloud stacks, enterprise mainframes process millions of records using simple, ultra-fast sequential flat files (**QSAM** - Queued Sequential Access Method). 
@@ -212,7 +226,50 @@ Save this file as `jcl/EXECZ.jcl`. This script compiles the source and maps your
 
 ## 🚀 How to Run this Project
 
-1. **Clone to VS Code**: Clone this repo locally and make sure you have the **IBM Z Open Editor** extension running.
-2. **Upload to Mainframe**: Transfer the files to your target mainframe partition (`PDS`) allocations using FTP or Zowe CLI.
-3. **Submit Job**: Open `EXECZ.jcl` inside your emulator or **AntiGravity terminal dashboard**, and submit the job card using the command line option (`sub`).
-4. **Inspect System Output**: Look inside your terminal output files. You will find a generated sequential dataset `USER.BANK.NEWMAST` containing updated balances, and an output audit stream listing out the processed events line-by-line!
+You can run this project in two ways: using the **Interactive Local Web Simulator** (recommended for quick offline testing) or deploying it natively to an **IBM Z Mainframe**.
+
+### Option A: Interactive Local Web Simulator (Recommended)
+
+This project includes a retro, client-side web simulator representing an IBM 3270 Mainframe developer station. 
+
+#### 1. Start a Local HTTP Server
+Because the simulator dynamically displays code files from the workspace, run a local web server to avoid browser CORS restrictions. Open your terminal in the `LedgerZ` folder and run:
+```bash
+python -m http.server 8000
+```
+
+#### 2. Open the Simulator in your Browser
+* If you ran the command inside the **`LedgerZ`** directory, open:
+  👉 **[http://localhost:8000/index.html](http://localhost:8000/index.html)**
+* If you ran the command in the **parent workspace** directory, open:
+  👉 **[http://localhost:8000/LedgerZ/index.html](http://localhost:8000/LedgerZ/index.html)**
+
+#### 3. Operating the Simulator
+1. **Interactive Datasets**: Click on the **Flat Datasets** tab. You can directly edit the raw 80-byte records for the initial balances (`OLDMAST`) and ATM transactions (`TRANSIN`).
+2. **Compile the COBOL Engine**: Under the **Compiler & JCL** tab, click **Run Compile**. The emulated console will display the compile steps.
+3. **Submit the Batch Job**: Click **Submit Job** (or type `SUB` in TSO command prompt on the screen and press **Enter**).
+4. **Verify Outputs**:
+   * Inspect the updated account sheets in the **Database Grids** tab.
+   * View the processed entries and transaction logs in the **JCL Console** (which outputs the simulated JCL printer log `AUDITOUT`).
+
+---
+
+### Option B: Native IBM Z Mainframe Deployment
+
+To deploy and execute the code on a real mainframe LPAR:
+
+1. **Upload Source Members**: Transfer `src/LEDGERZ.cbl` and `jcl/EXECZ.jcl` to your mainframe partitioned datasets (PDS) e.g. `USER.PROJECT.SOURCE(LEDGERZ)` and `USER.PROJECT.JCL(EXECZ)` using FTP or Zowe CLI.
+2. **Submit Job Card**: Submit `EXECZ.jcl` using your emulator console or command-line submission (`sub`).
+3. **Inspect Output**: View job results in System Display and Search Facility (`SDSF`). The output sequential dataset `USER.BANK.NEWMAST` will be created with updated balances.
+
+---
+
+## 🔒 Security & Code Integrity Review
+
+A strict security analysis was performed on this codebase to verify compliance and protect sensitive information:
+
+* **No Credential Leaks**: There are no hardcoded API keys, passwords, LPAR mainframe credentials, or private SSH keys present in the repository.
+* **No Real PII (Personally Identifiable Information)**: All names (`ALICE SMITH`, `BOB JOHNSON`), account numbers, and transaction balances are completely simulated mock banking records.
+* **Client-Side Sandbox Isolation**: The web simulator executes 100% locally in your browser. It does not establish external network connections, perform API calls, or upload any user-modified datasets to external servers.
+* **Safe DOM Injection**: All user inputs in the dataset editors are sanitized and escaped via `escapeHtml()` prior to table rendering to prevent Cross-Site Scripting (XSS) injection.
+

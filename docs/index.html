@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LedgerZ: Mainframe Flat-File Batch Simulator</title>
+    <!-- Google Fonts for Retro Mainframe & Premium Modern Feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,400&family=VT323&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Header Bar -->
+        <header class="app-header">
+            <div class="logo-area">
+                <span class="badge zos">z/OS</span>
+                <h1>IBM z16 Enterprise Batch Console</h1>
+            </div>
+            <div class="system-status">
+                <div class="status-item">
+                    <span class="status-dot online"></span>
+                    <span class="status-text">SYS: LPAR_Z16</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">CPU:</span>
+                    <span class="value" id="cpu-load">0.2%</span>
+                </div>
+                <div class="status-item">
+                    <span class="label">JES2 SPOOL:</span>
+                    <span class="value">ACTIVE</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Workspace Grid -->
+        <main class="workspace">
+            <!-- Left Pane: The 3270 Terminal Screen -->
+            <section class="pane terminal-pane">
+                <div class="pane-header">
+                    <span class="pane-title">IBM 3277 Display Terminal (LPAR01)</span>
+                    <div class="terminal-controls">
+                        <button id="btn-sound-toggle" class="btn-control" title="Toggle Sound FX">
+                            <span class="sound-icon">🔊</span>
+                        </button>
+                        <button id="btn-power" class="btn-terminal-power" title="Power Cycle Terminal">
+                            <span class="power-icon">⏻</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="terminal-wrapper">
+                    <!-- Retro CRT Monitor Screen -->
+                    <div class="crt-screen" id="crt-monitor">
+                        <div class="crt-overlay"></div>
+                        <div class="crt-flicker"></div>
+                        
+                        <!-- Terminal UI Content -->
+                        <div class="terminal-screen" id="terminal-content">
+                            <!-- Line 1: Header -->
+                            <div class="terminal-row row-header">
+                                <span class="col-left font-large">TSO/E - SYSTEM UTILITIES CONSOLE</span>
+                                <span class="col-right" id="term-time">09:51:35</span>
+                            </div>
+                            <!-- Line 2: System info -->
+                            <div class="terminal-row row-sub margin-bottom-1">
+                                <span>IBM Corporation © 2026. LPAR Z16 Batch Dev.</span>
+                            </div>
+                            
+                            <!-- Prompt screen area -->
+                            <div class="terminal-body" id="terminal-body-output">
+                                <div class="log-line text-green">READY</div>
+                                <div class="log-line text-cyan">> To compile the COBOL program or execute batch JCL, use the dashboard buttons on the right or type commands directly:</div>
+                                <div class="log-line text-yellow">> Commands: SUBMIT, COMPCOB, CLEAR</div>
+                            </div>
+
+                            <!-- Bottom Input line -->
+                            <div class="terminal-footer">
+                                <div class="terminal-row input-line">
+                                    <span class="text-green">===></span>
+                                    <span class="input-container">
+                                        <input type="text" id="tso-cmd-input" autofocus autocomplete="off" placeholder="SUBMIT 'USER.PROJECT.JCL(EXECZ)'">
+                                        <span class="custom-cursor"></span>
+                                    </span>
+                                </div>
+                                <div class="terminal-row error-line">
+                                    <span class="text-error" id="err-message">&nbsp;</span>
+                                </div>
+                                <div class="terminal-row status-bar">
+                                    <span class="stat-block">KB: LOCK_OFF</span>
+                                    <span class="stat-block" id="stat-row-col">R24 C05</span>
+                                    <span class="stat-block msg-waiting" id="stat-wait">TSO READY</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Power-Off Screen Overlay -->
+                        <div class="terminal-off-overlay" id="power-off-screen">
+                            <div class="off-message">
+                                <h3>IBM 3277 POWERED OFF</h3>
+                                <p>Toggle the power button above to boot the workstation LPAR terminal</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- On-Screen Terminal Keypad -->
+                <div class="on-screen-keypad">
+                    <button class="key-btn" id="key-clear">CLEAR</button>
+                    <button class="key-btn" id="key-reset">RESET</button>
+                    <button class="key-btn" id="key-pa1">PA1 (ATTN)</button>
+                    <button class="key-btn key-action" id="key-sub">SUB JOB</button>
+                    <button class="key-btn key-action" id="key-enter">ENTER</button>
+                </div>
+            </section>
+
+            <!-- Right Pane: Dataset inspector & Job execution tabs -->
+            <section class="pane control-pane">
+                <div class="tab-selectors">
+                    <button class="tab-btn active" data-tab="tab-datasets">💾 Flat Datasets</button>
+                    <button class="tab-btn" data-tab="tab-grids">📊 Database Grids</button>
+                    <button class="tab-btn" data-tab="tab-jcl">🏗️ Compiler & JCL</button>
+                    <button class="tab-btn" data-tab="tab-src">📄 Source Code</button>
+                </div>
+
+                <div class="tab-content-container">
+                    <!-- Tab 1: Dataset Editor (OLDMAST & TRANSIN) -->
+                    <div class="tab-content active" id="tab-datasets">
+                        <div class="content-header">
+                            <h3>Mainframe Flat Sequential Datasets</h3>
+                            <p>Directly modify the raw 80-byte Fixed Block datasets to test different banking scenarios.</p>
+                        </div>
+                        <div class="editor-grid">
+                            <div class="editor-container">
+                                <div class="editor-header">
+                                    <span>DSN: USER.BANK.OLDMAST (Master Balance State)</span>
+                                    <span class="col-spec">LRECL=80, FB</span>
+                                </div>
+                                <textarea id="dataset-oldmast" spellcheck="false" class="flat-file-editor">0000000001ALICE SMITH         0000500000
+0000000002BOB JOHNSON        0001250050
+0000000003CHARLIE BROWN      0000004500</textarea>
+                            </div>
+                            <div class="editor-container">
+                                <div class="editor-header">
+                                    <span>DSN: USER.BANK.TRANSIN (Nightly Transaction Drop)</span>
+                                    <span class="col-spec">LRECL=80, FB</span>
+                                </div>
+                                <textarea id="dataset-transin" spellcheck="false" class="flat-file-editor">0000000001D000015000
+0000000002W0000005050
+0000000009D000010000</textarea>
+                            </div>
+                        </div>
+                        <div class="datasets-actions">
+                            <button id="btn-reset-datasets" class="btn-secondary">Reset to Default Data</button>
+                            <button id="btn-sync-databases" class="btn-primary">Update Database Grids</button>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Structured Grid Viewer -->
+                    <div class="tab-content" id="tab-grids">
+                        <div class="content-header">
+                            <h3>QSAM Dataset Structured View</h3>
+                            <p>Visual representation of the flat-file record contents parsed according to the COBOL record descriptions.</p>
+                        </div>
+
+                        <div class="grid-views-container">
+                            <div class="db-section">
+                                <h4>Old Master Balance File (`OLDMAST`)</h4>
+                                <div class="table-wrapper mini-table">
+                                    <table class="db-table" id="table-oldmast">
+                                        <thead>
+                                            <tr>
+                                                <th>MSR-ACC-NUM (01-10)</th>
+                                                <th>MSR-NAME (11-30)</th>
+                                                <th>MSR-BALANCE (31-40)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Dynamically Populated -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="db-section">
+                                <h4>Transaction File (`TRANSIN`)</h4>
+                                <div class="table-wrapper mini-table">
+                                    <table class="db-table" id="table-transin">
+                                        <thead>
+                                            <tr>
+                                                <th>TRN-ACC-NUM (01-10)</th>
+                                                <th>TRN-TYPE (11)</th>
+                                                <th>TRN-AMOUNT (12-21)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Dynamically Populated -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="db-section">
+                                <h4>New Master File (`NEWMAST`) &mdash; <span class="badge-status" id="newmast-status">Unprocessed</span></h4>
+                                <div class="table-wrapper mini-table">
+                                    <table class="db-table" id="table-newmast">
+                                        <thead>
+                                            <tr>
+                                                <th>NM-ACC-NUM (01-10)</th>
+                                                <th>NM-NAME (11-30)</th>
+                                                <th>NM-BALANCE (31-40)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="3" class="text-muted text-center">Submit execution job to generate dataset.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: Compiler & JCL Runner -->
+                    <div class="tab-content" id="tab-jcl">
+                        <div class="content-header">
+                            <h3>JES2 Job Submitter and Compiler</h3>
+                            <p>Manage compilation of COBOL source code and execution of batch sequential datasets.</p>
+                        </div>
+
+                        <div class="compilation-stepper">
+                            <div class="step-card" id="step-compile-card">
+                                <div class="step-badge">1</div>
+                                <div class="step-info">
+                                    <h4>Compile COBOL Program</h4>
+                                    <code>COMPILE USER.PROJECT.SOURCE(LEDGERZ)</code>
+                                </div>
+                                <button class="btn-compile" id="btn-compile-cobol">Run Compile</button>
+                            </div>
+
+                            <div class="step-card" id="step-jcl-card">
+                                <div class="step-badge">2</div>
+                                <div class="step-info">
+                                    <h4>Submit JCL Batch Job</h4>
+                                    <code>SUBMIT USER.PROJECT.JCL(EXECZ)</code>
+                                </div>
+                                <button class="btn-compile" id="btn-submit-jcl" disabled>Submit Job</button>
+                            </div>
+                        </div>
+
+                        <!-- Compilation console log view -->
+                        <div class="terminal-log-view">
+                            <div class="log-header">
+                                <span>Output Console Logs (JESYSMSG)</span>
+                                <button class="btn-clear-logs" id="btn-clear-logs">Clear Console</button>
+                            </div>
+                            <pre class="log-output" id="jcl-console">> Console ready. Awaiting compile/execution steps...</pre>
+                        </div>
+                    </div>
+
+                    <!-- Tab 4: Source Code Viewer -->
+                    <div class="tab-content" id="tab-src">
+                        <div class="content-header">
+                            <h3>Mainframe Source Dataset Members</h3>
+                            <p>Inspect the COBOL program and JCL job card source members from the VS Code editor.</p>
+                        </div>
+                        <div class="source-selector">
+                            <button class="src-file-btn active" data-file="cbl">LEDGERZ.cbl (COBOL)</button>
+                            <button class="src-file-btn" data-file="jcl">EXECZ.jcl (JCL)</button>
+                        </div>
+                        <div class="source-code-display">
+                            <pre><code id="code-content-area">Loading source code...</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Inject parent-relative data references for docs subdirectory hosting -->
+    <script>
+        window.cblSourcePath = '../src/LEDGERZ.cbl';
+        window.jclSourcePath = '../jcl/EXECZ.jcl';
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
